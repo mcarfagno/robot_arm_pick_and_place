@@ -5,7 +5,7 @@ import tf
 from kuka_arm.srv import *
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from geometry_msgs.msg import Pose
-from sympy import *
+from sympy import Matrix,symbols,pi,sin,cos,atan2,sqrt,acos
 from mpmath import radians
 
 def handle_calculate_IK(req):
