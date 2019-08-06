@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="gripper">
+
+    <!--XACRO INCLUDES-->
+    <xacro:include filename="$(find gripper_description)/urdf/gripper.gazebo.xacro" />
+    <xacro:include filename="$(find gripper_description)/urdf/gripper.transmission.xacro" />
+    
+    <!--GRIPPER MACRO-->
+    <xacro:macro name="gripper" params="prefix">
+
+        <link name="${prefix}gripper_link">
+            <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <mass value="0.3"/>
+            <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0002" iyz="0" izz="0.0001" />
+            </inertial>
+            <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://gripper_description/meshes/gripper_base.dae" scale="0.5 0.5 0.5"/>
+            </geometry>
+            </visual>
+            <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://gripper_description/meshes/gripper_base.dae" scale="0.5 0.5 0.5"/>
+            </geometry>
+            </collision>
+        </link>
+
+        <link name="${prefix}right_gripper_finger_link">
+            <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <mass value="0.1"/>
+            <inertia ixx="0.002" ixy="0" ixz="0" iyy="0.0002" iyz="0" izz="0.0002"/>
+            </inertial>
+            <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://gripper_description/meshes/finger_right.dae" scale="0.5 0.5 0.5"/>
+            </geometry>
+            </visual>
+            <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://gripper_description/meshes/finger_right_collision.dae" scale="0.5 0.5 0.5"/>
+            </geometry>
+            </collision>
+        </link>
+
+        <link name="${prefix}left_gripper_finger_link">
+            <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <mass value="0.1"/>
+            <inertia ixx="0.002" ixy="0" ixz="0" iyy="0.0002" iyz="0" izz="0.0002"/>
+            </inertial>
+            <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://gripper_description/meshes/finger_left.dae" scale="0.5 0.5 0.5"/>
+            </geometry>
+            </visual>
+            <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://gripper_description/meshes/finger_left_collision.dae" scale="0.5 0.5 0.5"/>
+            </geometry>
+            </collision>
+        </link>
+
+        <joint name="${prefix}right_gripper_finger_joint" type="prismatic">
+            <origin rpy="0 0 0" xyz="0.075 -0.03625 0" />
+            <parent link="gripper_link" />
+            <child link="right_gripper_finger_link" />
+            <axis xyz="0 1 0" />
+            <limit effort="100" lower="-0.01" upper="0.06" velocity="0.05" />
+            <dynamics damping="0.7" />
+        </joint>
+
+        <joint name="${prefix}left_gripper_finger_joint" type="prismatic">
+            <origin rpy="0 0 0" xyz="0.075 0.03625 0" />
+            <parent link="gripper_link" />
+            <child link="left_gripper_finger_link" />
+            <axis xyz="0 -1 0" />
+            <limit effort="100" lower="-0.01" upper="0.06" velocity="0.05" />
+            <dynamics damping="0.7" />
+        </joint>
+    
+        <xacro:gripper_transmission prefix="${prefix}" />
+        <xacro:gripper_gazebo prefix="${prefix}" />
+    
+    </xacro:macro>
+
+    <!--GRIPPER URDF-->
+    <xacro:gripper prefix="${prefix}" />
+
+</robot>
