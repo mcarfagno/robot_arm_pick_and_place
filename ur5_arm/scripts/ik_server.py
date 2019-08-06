@@ -2,7 +2,7 @@
 
 import rospy
 import tf
-from kuka_arm.srv import *
+from ur5_arm.srv import *
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from geometry_msgs.msg import Pose
 from sympy import *
@@ -76,7 +76,7 @@ def handle_calculate_IK(req):
 
         #Compute EE Pose Vector
         X = zeros(6,1)
-        X[0:3,0] = T[0:3,3]
+        X[0:3,0] = T0_EE_GAZEBO[0:3,3]
         X[3,0] = atan2(T0_EE_GAZEBO[2,1],T0_EE_GAZEBO[2,2]) #Roll
         X[4,0] = atan2(-T0_EE_GAZEBO[2,0], sqrt(T0_EE_GAZEBO[0,0]*T0_EE_GAZEBO[0,0] + T0_EE_GAZEBO[1,0]*T0_EE_GAZEBO[1,0])) #Pitch
         X[5,0] = atan2(T0_EE_GAZEBO[1,0],T0_EE_GAZEBO[0,0]) #YAW
@@ -99,7 +99,7 @@ def handle_calculate_IK(req):
 
             joint_trajectory_point = JointTrajectoryPoint()
 
-            #Extract EE goal pose
+            #Extract EE goal pose from request
             px = req.poses[i].position.x
             py = req.poses[i].position.y
             pz = req.poses[i].position.z
@@ -120,7 +120,7 @@ def handle_calculate_IK(req):
             x_ee=x(q[0],q[1],q[2],q[3],q[4],q[5]).astype(np.float64)
             x_ee=np.squeeze(x_ee, axis=2)
 
-            #ompute Error
+            #Compute Error
             delta_x=x_goal-x_ee
             delta_x[3]=( delta_x[3] + np.pi) % (2 * np.pi ) - np.pi
             delta_x[4]=( delta_x[4] + np.pi) % (2 * np.pi ) - np.pi
@@ -144,7 +144,7 @@ def handle_calculate_IK(req):
                     break
 
             #Populate response
-            joint_trajectory_point.positions = [q[0]q[1],q[2],q[3],q[4],q[5]]
+            joint_trajectory_point.positions = [q[0],q[1],q[2],q[3],q[4],q[5]]
             joint_trajectory_list.append(joint_trajectory_point)
 
     return CalculateIKResponse(joint_trajectory_list)
