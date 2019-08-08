@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<robot>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
 
-    <xacro:macro name="gripper_gazebo" params="prefix">
+  <xacro:macro name="gripper_gazebo" params="prefix">
 
       <gazebo reference="${prefix}gripper_link">
         <material>Gazebo/Grey</material>
@@ -26,4 +26,5 @@
       </gazebo>
 
     </xacro:macro>
+
 </robot>
