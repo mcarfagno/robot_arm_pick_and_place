@@ -2,6 +2,12 @@
 <robot xmlns:xacro="http://wiki.ros.org/xacro">
 
   <xacro:macro name="gripper_gazebo" params="prefix">
+      
+      <gazebo>
+        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+          <robotNamespace>${prefix}gripper</robotNamespace>
+        </plugin>
+      </gazebo>
 
       <gazebo reference="${prefix}gripper_link">
         <material>Gazebo/Grey</material>
