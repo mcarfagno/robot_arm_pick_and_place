@@ -1,0 +1,5 @@
+# attached gripper lenght inc. fingers
+gripper_lenght: 0.035
+
+# Robot base_link position in the world frame
+base_position: [0.0, 0.0, 0.0]
