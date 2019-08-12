@@ -2,7 +2,7 @@
 <launch>
   <arg name="paused" default="false" doc="Starts gazebo in paused mode" />
   <arg name="gui" default="true" doc="Starts gazebo gui" />
-  
+
   <!-- startup simulated world -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" default="worlds/empty.world"/>
@@ -11,7 +11,7 @@
   </include>
 
   <!-- send robot urdf to param server -->
-  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find ur5_arm)/urdf/ur5_arm.urdf.xacro'" />
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find ur5_arm_description)/urdf/ur5_arm.urdf.xacro'" />
 
   <!-- spawn robot in gazebo -->
   <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model robot -x 0.0 -y 0.0 -z 0.1" respawn="false" output="screen" />
