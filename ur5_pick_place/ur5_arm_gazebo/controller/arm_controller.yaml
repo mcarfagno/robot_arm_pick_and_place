@@ -27,15 +27,15 @@ arm_controller:
     wrist_2_joint: {p: 100, i: 0.01, d: 1}
     wrist_3_joint: {p: 100, i: 0.01, d: 1}
 
-# joint_group_position_controller:
-#   type: position_controllers/JointGroupPositionController
-#   joints:
-#      - shoulder_pan_joint
-#      - shoulder_lift_joint
-#      - elbow_joint
-#      - wrist_1_joint
-#      - wrist_2_joint
-#      - wrist_3_joint
+joint_group_position_controller:
+  type: position_controllers/JointGroupPositionController
+  joints:
+     - shoulder_pan_joint
+     - shoulder_lift_joint
+     - elbow_joint
+     - wrist_1_joint
+     - wrist_2_joint
+     - wrist_3_joint
 
 gripper_controller:
   type: "effort_controllers/JointTrajectoryController"
@@ -51,5 +51,3 @@ gripper_controller:
       goal: 0.02
     left_gripper_finger_joint:
       goal: 0.02
-  
-
