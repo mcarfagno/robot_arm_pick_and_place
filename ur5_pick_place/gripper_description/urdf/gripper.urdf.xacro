@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://wiki.ros.org/xacro" name="gripper">
 
     <!--XACRO ARGUMENTS-->
-    <xacro:arg name="prefix" default=""/>
+    <!--<xacro:arg name="prefix" default=""/>-->
 
     <!--XACRO INCLUDES-->
     <xacro:include filename="$(find gripper_description)/urdf/gripper.gazebo.xacro" />
@@ -88,13 +88,14 @@
             <limit effort="100" lower="-0.01" upper="0.03" velocity="0.05" />
             <dynamics damping="0.7" />
         </joint>
-    
+        
+        <!--XACRO MACRO-->
         <xacro:gripper_transmission prefix="${prefix}" />
         <xacro:gripper_gazebo prefix="${prefix}" />
-    
+
     </xacro:macro>
 
     <!--GRIPPER URDF-->
-    <xacro:gripper prefix="$(arg prefix)"/>
+    <!--<xacro:gripper prefix="$(arg prefix)"/>-->
 
 </robot>

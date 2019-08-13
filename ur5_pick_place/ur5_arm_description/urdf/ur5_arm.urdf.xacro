@@ -1,9 +1,22 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://wiki.ros.org/xacro" name="ur5_arm">
 
+    <!--XACRO ARGUMENTS-->
+    <xacro:arg name="prefix" default=""/>
+    <xacro:arg name="joint_limited" default="false"/>
+    <xacro:arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface"/>
+
     <!--XACRO INCLUDES-->
     <xacro:include filename="$(find gripper_description)/urdf/gripper.urdf.xacro" />
-    <xacro:include filename="$(find ur_description)/urdf/ur5_robot.urdf.xacro" />
+    <xacro:include filename="$(find ur_description)/urdf/ur5.urdf.xacro" />
+    <xacro:include filename="$(find ur5_arm_description)/urdf/gazebo_plugins.urdf.xacro" />
+
+    <!--GRIPPER MACRO-->
+    <xacro:gripper prefix="$(arg prefix)"/>
+    <!--UR5 MACRO-->
+    <xacro:ur5_robot prefix="$(arg prefix)" joint_limited="$(arg joint_limited)"
+    transmission_hw_interface="$(arg transmission_hw_interface)"
+    />
 
     <!--ROBOT LAST LINK TO GRIPPER BASE LINK-->
     <joint name="gripper_joint" type="fixed">
@@ -11,6 +24,14 @@
         <child link="gripper_link"/>
         <origin xyz="0.0435 0 0" rpy="0 0 0"/>
         <axis xyz="0 1 0" />
+    </joint>
+    
+    <!--GAZEBO FIX URDF TO WORLD-->
+    <link name="world" />
+
+    <joint name="world_joint" type="fixed">
+        <parent link="world" />
+        <child link = "base_link" />
     </joint>
 
 </robot>
