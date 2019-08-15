@@ -3,6 +3,7 @@
 import rospy
 import actionlib
 import math
+import sys
 
 from control_msgs.msg import (
     FollowJointTrajectoryAction,
@@ -92,7 +93,7 @@ class Trajectory(object):
 
 def main():
     print("Initializing node... ")
-    rospy.init_node("follow_joint_trajectory_node",anonymous=True)
+    rospy.init_node("follow_joint_trajectory_node")
     print("Running. Ctrl-c to quit")
 
     joints_names_list=["shoulder_pan_joint",
