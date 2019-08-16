@@ -26,3 +26,4 @@ Inspired by Udacity's [Robotic arm - Pick & Place project](https://github.com/ud
 ### Dependencies
 
 * [Universal Robot ROS Packages](https://github.com/ros-industrial/universal_robot)
+* [Robotiq 85 Gripper ROS Package](https://github.com/StanleyInnovation/robotiq_85_gripper)
