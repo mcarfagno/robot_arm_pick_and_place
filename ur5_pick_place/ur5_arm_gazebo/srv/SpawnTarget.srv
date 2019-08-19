@@ -1,3 +1,3 @@
 int32 position
 ---
-bool result
+geometry_msgs/Pose pose

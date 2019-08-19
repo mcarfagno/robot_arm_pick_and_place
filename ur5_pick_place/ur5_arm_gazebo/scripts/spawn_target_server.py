@@ -32,19 +32,8 @@ def handle_spawn_target(req):
 
         if req.position not in range(0,10):
             print("target position not in valid range!")
-            return SpawnTargetResponse(False)
+            return -1
         else:
-            target_locations={
-                1:[0,0,0],
-                2:[1,0,0],
-                3:[2,0,0],
-                4:[0,1,0],
-                5:[1,1,0],
-                6:[2,1,0],
-                7:[0,2,0],
-                8:[1,2,0],
-                9:[2,2,0]
-            }
 
             rospack = rospkg.RosPack()
             spawn_model = rospy.ServiceProxy("gazebo/spawn_urdf_model",SpawnModel)
@@ -57,12 +46,24 @@ def handle_spawn_target(req):
             if not resp_dm.success:
                 print(resp_dm.status_message)
 
+            target_locations={
+                1:[0,0,0],
+                2:[1,0,0],
+                3:[2,0,0],
+                4:[0,1,0],
+                5:[1,1,0],
+                6:[2,1,0],
+                7:[0,2,0],
+                8:[1,2,0],
+                9:[2,2,0]
+            }
+
             if req.position == 0:
                 choosen_location = target_locations[randrange(1,10)]
             else:
                 choosen_location = target_locations[req.position]
 
-            target_pose = Pose(
+            target_spawn_pose = Pose(
                 Point(
                     choosen_location[0],
                     choosen_location[1],
@@ -74,13 +75,14 @@ def handle_spawn_target(req):
             with open(rospack.get_path("ur5_arm_gazebo") + "/urdf/target.urdf.xacro","r") as urdf:
                 target_xml = urdf.read()
 
-            req_sm = SpawnModelRequest("target",target_xml,"",target_pose,"world")
+            req_sm = SpawnModelRequest("target",target_xml,"",target_spawn_pose,"world")
             resp_sm = spawn_model(req_sm)
 
             if not resp_sm.success:
                 print(resp_sm.status_message)
+                return -1
 
-            return SpawnTargetResponse(True)
+            return SpawnTargetResponse(target_spawn_pose)
 
 if __name__=='__main__':
 
