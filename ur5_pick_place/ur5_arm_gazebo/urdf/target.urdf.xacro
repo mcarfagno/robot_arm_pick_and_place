@@ -1,4 +1,5 @@
 <robot name="target_box">
+
   <link name="target_link_1">
     <inertial>
       <origin xyz="0 0 0" />
@@ -8,20 +9,54 @@
     <visual>
       <origin xyz="0 0 0"/>
       <geometry>
-        <cylinder radius="0.05" length="0.25"/>
-        <!--box size="0.10 0.10 0.25"/-->
+        <!-- <cylinder radius="0.05" length="0.25"/> -->
+        <box size="0.02 0.02 0.08"/>
       </geometry>
     </visual>
     <collision>
       <origin xyz="0 0 0"/>
       <geometry>
-        <cylinder radius="0.05" length="0.25"/>
-        <!--box size="0.10 0.10 0.25"/-->
+        <!-- <cylinder radius="0.05" length="0.25"/> -->
+        <box size="0.02 0.02 0.08"/>
       </geometry>
     </collision>
   </link>
+
+  <joint name="base_body_joint" type="fixed">
+        <parent link="target_link_1" />
+        <child link = "target_link_2" />
+    </joint>
+
+  <link name="target_link_2">
+    <inertial>
+      <origin xyz="0 0 -0.04" />
+      <mass value="0.05" />
+      <inertia  ixx="0.006" ixy="0"  ixz="0"  iyy="0.006"  iyz="0"  izz="0.002"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 -0.04"/>
+      <geometry>
+        <cylinder radius="0.025" length="0.02"/>
+        <!-- <box size="0.05 0.05 0.25"/> -->
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.04"/>
+      <geometry>
+        <cylinder radius="0.025" length="0.02"/>
+        <!-- <box size="0.05 0.05 0.25"/> -->
+      </geometry>
+    </collision>
+  </link>
+  
   <gazebo reference="target_link_1">
-    <material>Gazebo/Blue</material>
+    <material>Gazebo/Orange</material>
+    <mu1>1.0</mu1>
+    <mu2>1.0</mu2>
+  </gazebo>
+
+  <gazebo reference="target_link_2">
+    <material>Gazebo/Orange</material>
     <mu1>1.0</mu1>
     <mu2>1.0</mu2>
   </gazebo>

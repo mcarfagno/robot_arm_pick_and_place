@@ -2,8 +2,23 @@ cmake_minimum_required(VERSION 2.8.3)
 
 project(ur5_arm_gazebo)
 
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+  rospy
+  message_generation 
+  std_msgs
+)
 
-catkin_package()
+add_service_files(
+  FILES
+  SpawnTarget.srv
+)
 
-install(DIRECTORY launch controller DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+generate_messages(DEPENDENCIES
+  std_msgs
+)
+
+catkin_package(
+    CATKIN_DEPENDS
+    message_runtime
+)

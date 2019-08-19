@@ -1,24 +1,23 @@
 <?xml version="1.0"?>
 <package>
   <name>ur5_arm_gazebo</name>
-  <version>1.2.5</version>
+  <version>0.0.1</version>
   <description>
-      Gazebo wrapper for the Universal UR5 robot arm.
+      The ur5_arm_gazebo package
   </description>
 
+<!-- One maintainer tag required, multiple allowed, one person per tag -->
+  <!-- Example:  -->
+  <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
+  <maintainer email="marcello@todo.todo">marcello</maintainer>  <!-- One license tag required, multiple allowed, one license per tag -->
+  <!-- Commonly used license strings: -->
+  <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
+  <license>TODO</license>  <!-- Url tags are optional, but multiple are allowed, one per tag -->
 
-  <author>Alexander Bubeck</author>
-  <author>Shaun Edwards</author>
-  <author>Felix Messmer</author>
-  <maintainer email="g.a.vanderhoorn@tudelft.nl">G.A. vd. Hoorn</maintainer>
-  <maintainer email="miguel.prada@tecnalia.com">Miguel Prada Sarasola</maintainer>
-  <maintainer email="nhg@ipa.fhg.de">Nadia Hammoudeh Garcia</maintainer>
-
-  <license>BSD</license>
-
-  <url type="website">http://ros.org/wiki/ur_gazebo</url>
 
   <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>message_generation</build_depend>
   <test_depend>roslaunch</test_depend>
   <run_depend>controller_manager</run_depend>
   <run_depend>effort_controllers</run_depend>
@@ -30,6 +29,7 @@
   <run_depend>robot_state_publisher</run_depend>
   <run_depend>rostopic</run_depend>
   <run_depend>ur_description</run_depend>
+  <run_depend>message_runtime</run_depend>
 
   <export>
   </export>
