@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: ur5_arm_description
+    relative_path: urdf/ur5_arm.urdf.xacro
+    xacro_args: "--inorder "
+  SRDF:
+    relative_path: config/ur5_arm.srdf
+  CONFIG:
+    author_name: marcello
+    author_email: marcello@ubuntu.com
+    generated_timestamp: 1566384115

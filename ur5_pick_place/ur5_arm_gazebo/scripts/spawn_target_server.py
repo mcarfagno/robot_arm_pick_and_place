@@ -29,60 +29,63 @@ from tf.transformations import(
 )
 
 def handle_spawn_target(req):
+    """
+    Spawns the target in one of 9 prefined locations, picks one random if 0.
+    """
+    if req.position not in range(0,10):
+        rospy.logerr("target position not in valid range!")
+        return rospy.ServiceException("target position not in valid range 0-9.")
+    else:
 
-        if req.position not in range(0,10):
-            print("target position not in valid range!")
-            return -1
+        rospack = rospkg.RosPack()
+        spawn_model = rospy.ServiceProxy("gazebo/spawn_urdf_model",SpawnModel)
+        delete_model = rospy.ServiceProxy("gazebo/delete_model",DeleteModel)
+
+        target_locations={
+            1:[0,0,0],
+            2:[1,0,0],
+            3:[2,0,0],
+            4:[0,1,0],
+            5:[1,1,0],
+            6:[2,1,0],
+            7:[0,2,0],
+            8:[1,2,0],
+            9:[2,2,0]
+        }
+
+        if req.position == 0:
+            choosen_location = target_locations[randrange(1,10)]
         else:
+            choosen_location = target_locations[req.position]
 
-            rospack = rospkg.RosPack()
-            spawn_model = rospy.ServiceProxy("gazebo/spawn_urdf_model",SpawnModel)
-            delete_model = rospy.ServiceProxy("gazebo/delete_model",DeleteModel)
+        target_spawn_pose = Pose(
+            Point(
+                choosen_location[0],
+                choosen_location[1],
+                choosen_location[2]
+            ),
+            Quaternion(0,0,0,1)
+        )
 
-            #Delete if already in scene
-            req_dm = DeleteModelRequest("target")
-            resp_dm = delete_model(req_dm)
+        with open(rospack.get_path("ur5_arm_gazebo") + "/urdf/target.urdf.xacro","r") as urdf:
+            target_xml = urdf.read()
 
-            if not resp_dm.success:
-                print(resp_dm.status_message)
+        # Delete if already in scene
+        req_dm = DeleteModelRequest("target")
+        resp_dm = delete_model(req_dm)
 
-            target_locations={
-                1:[0,0,0],
-                2:[1,0,0],
-                3:[2,0,0],
-                4:[0,1,0],
-                5:[1,1,0],
-                6:[2,1,0],
-                7:[0,2,0],
-                8:[1,2,0],
-                9:[2,2,0]
-            }
+        if not resp_dm.success:
+            rospy.logwarn(resp_dm.status_message)
 
-            if req.position == 0:
-                choosen_location = target_locations[randrange(1,10)]
-            else:
-                choosen_location = target_locations[req.position]
+        # Spawn urdf in scene
+        req_sm = SpawnModelRequest("target",target_xml,"",target_spawn_pose,"world")
+        resp_sm = spawn_model(req_sm)
 
-            target_spawn_pose = Pose(
-                Point(
-                    choosen_location[0],
-                    choosen_location[1],
-                    choosen_location[2]
-                ),
-                Quaternion(0,0,0,1)#Quaternion([quaternion_from_euler(0,0,0))
-            )
+        if not resp_sm.success:
+            rospy.logwarn(resp_sm.status_message)
+            return rospy.ServiceException(resp_sm.status_message)
 
-            with open(rospack.get_path("ur5_arm_gazebo") + "/urdf/target.urdf.xacro","r") as urdf:
-                target_xml = urdf.read()
-
-            req_sm = SpawnModelRequest("target",target_xml,"",target_spawn_pose,"world")
-            resp_sm = spawn_model(req_sm)
-
-            if not resp_sm.success:
-                print(resp_sm.status_message)
-                return -1
-
-            return SpawnTargetResponse(target_spawn_pose)
+        return SpawnTargetResponse(target_spawn_pose)
 
 if __name__=='__main__':
 
