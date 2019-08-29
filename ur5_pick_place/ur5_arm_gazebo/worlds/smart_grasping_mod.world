@@ -3,28 +3,26 @@
     <gravity>0 0 -9.8</gravity>
     <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
     <atmosphere type='adiabatic'/>
-    <physics type="ode">
-      <gravity>0.000000 0.000000 -9.810000</gravity>
-      
-      <!-- <max_step_size>0.01</max_step_size>
-      <real_time_factor>0.2</real_time_factor>
-      <real_time_update_rate>1</real_time_update_rate> -->
+    <physics name='default_physics' default='0' type='ode'>
       <max_contacts>5</max_contacts>
-      
-      <ode> 
-        <solver> 
-          <type>quick</type> 
-          <iters>50</iters> 
-          <precon_iters>0</precon_iters> 
-          <sor>1.300000</sor> 
-        </solver> 
-        <constraints> 
-          <cfm>0.000000</cfm> 
-          <erp>0.200000</erp> 
-          <contact_max_correcting_vel>100.000000</contact_max_correcting_vel> 
-          <contact_surface_layer>0.001000</contact_surface_layer> 
-        </constraints> 
-      </ode> 
+      <ode>
+        <solver>
+          <type>quick</type>
+          <iters>50</iters>
+          <precon_iters>0</precon_iters>
+          <sor>1.3</sor>
+          <use_dynamic_moi_rescaling>0</use_dynamic_moi_rescaling>
+        </solver>
+        <constraints>
+          <cfm>0</cfm>
+          <erp>0.2</erp>
+          <contact_max_correcting_vel>100</contact_max_correcting_vel>
+          <contact_surface_layer>0.001</contact_surface_layer>
+        </constraints>
+      </ode>
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
     </physics>
     <scene>
       <ambient>0.4 0.4 0.4 1</ambient>
@@ -114,6 +112,7 @@
         </visual>
         <self_collide>0</self_collide>
         <kinematic>0</kinematic>
+        <gravity>1</gravity>
       </link>
       <pose frame=''>-0.168004 0.136981 0 0 -0 0</pose>
     </model>
@@ -136,81 +135,61 @@
       </spot>
     </light>
     <state world_name='default'>
-      <sim_time>0 0</sim_time>
-      <real_time>0 0</real_time>
-      <wall_time>1480586122 155091523</wall_time>
-      <iterations>0</iterations>
+      <sim_time>465 696000000</sim_time>
+      <real_time>136 738724027</real_time>
+      <wall_time>1567082691 307050591</wall_time>
+      <iterations>135871</iterations>
       <model name='building'>
-        <pose frame=''>0.25 0.18 0 0 -0 0</pose>
+        <pose frame=''>-0.05 -0.05 0 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='Wall_1'>
-          <pose frame=''>-1.17 0.18 0 0 -0 1.5708</pose>
+          <pose frame=''>-1.47 -0.05 0 0 -0 1.5708</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
         <link name='Wall_3'>
-          <pose frame=''>0.255 1.73 0 0 -0 0</pose>
+          <pose frame=''>-0.045 1.5 0 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='cafe_table'>
-        <pose frame=''>-0.168004 0.136981 0 0 -0 0</pose>
+        <pose frame=''>0 0 0 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>-0.168004 0.136981 0 0 -0 0</pose>
+          <pose frame=''>0 0 0 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
-      <model name='cricket_ball'>
-        <pose frame=''>0.15003 -5.5e-05 0.82 0.003644 -0.00082 0.000309</pose>
+      <model name='floor'>
+        <pose frame=''>0 0 -0.025 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>0.15 -0.000192 0.835975 0.003644 -0.00082 0.000309</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.00314 0.179937 -0.256644 2.55004 -1.5124 2.12055</acceleration>
-          <wrench>0.000461 0.026397 -0.03765 0 -0 0</wrench>
-        </link>
-      </model>
-      <model name='drill'>
-        <pose frame=''>-0.472191 0.158603 0.772337 0.000673 -0.000771 1e-06</pose>
-        <scale>1 1 1</scale>
-        <link name='link'>
-          <pose frame=''>-0.472191 0.158603 0.772337 0.000673 -0.000771 1e-06</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>-0.265657 0.080101 -0.000779 2.52813 -1.10431 3.13382</acceleration>
-          <wrench>-0.399155 0.120353 -0.001171 0 -0 0</wrench>
-        </link>
-      </model>
-      <model name='kinect'>
-        <pose frame=''>0.85931 0.242068 1.04639 0 0 -2.6122</pose>
-        <scale>1 1 1</scale>
-        <link name='link'>
-          <pose frame=''>0.85931 0.242068 1.04639 0 0 -2.6122</pose>
+          <pose frame=''>0 0 -0.025 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
-      <model name='unit_box'>
-        <pose frame=''>0.086297 0.252686 -0.007724 0 -0 0</pose>
-        <scale>3.65051 3.35986 0.01483</scale>
+      <model name='kinect_pilar'>
+        <pose frame=''>1 0 0.5 0 -0 0</pose>
+        <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>0.086297 0.252686 -0.007724 0 -0 0</pose>
-          <velocity>0 0 -23.275 0 -0 0</velocity>
-          <acceleration>0 0 -9.8 0 -0 0</acceleration>
-          <wrench>0 0 -9.8 0 -0 0</wrench>
+          <pose frame=''>1 0 0.5 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
-      <model name='unit_cylinder'>
-        <pose frame=''>1.40569 0.25378 0.5 0 -0 0</pose>
-        <scale>0.1393 0.1393 1</scale>
+      <model name='robot_pilar'>
+        <pose frame=''>0 -1 0.5 0 -0 0</pose>
+        <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>1.40569 0.25378 0.5 0 -0 0</pose>
+          <pose frame=''>0 -1 0.5 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -225,9 +204,9 @@
     </state>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose frame=''>3.12753 -1.41682 1.86723 0 0.279643 2.50817</pose>
-        <view_controller>orbit</view_controller>
-        <projection_type>perspective</projection_type>
+        <pose frame=''>3.63735 -1.65591 3.35248 -0 0.599643 2.60417</pose>
+        <view_controller>ortho</view_controller>
+        <projection_type>orthographic</projection_type>
       </camera>
     </gui>
     <light name='user_directional_light_0' type='directional'>
@@ -405,6 +384,7 @@
         </collision>
         <self_collide>0</self_collide>
         <kinematic>0</kinematic>
+        <gravity>1</gravity>
       </link>
       <link name='Wall_3'>
         <pose frame=''>0.005 1.55 0 0 -0 0</pose>
@@ -566,12 +546,13 @@
         </collision>
         <self_collide>0</self_collide>
         <kinematic>0</kinematic>
+        <gravity>1</gravity>
       </link>
       <static>1</static>
     </model>
     <model name='floor'>
       <static>1</static>
-      <pose frame=''>0.0 0.0 -0.025 0 0 0</pose>
+      <pose frame=''>0 0 -0.025 0 -0 0</pose>
       <link name='link'>
         <inertial>
           <mass>1</mass>
@@ -587,7 +568,7 @@
         <collision name='collision'>
           <geometry>
             <box>
-              <size>4.0 4.0 0.05</size>
+              <size>4 4 0.05</size>
             </box>
           </geometry>
           <max_contacts>10</max_contacts>
@@ -607,7 +588,7 @@
         <visual name='visual'>
           <geometry>
             <box>
-              <size>4.0 4.0 0.05</size>
+              <size>4 4 0.05</size>
             </box>
           </geometry>
           <material>
@@ -620,6 +601,7 @@
         </visual>
         <self_collide>0</self_collide>
         <kinematic>0</kinematic>
+        <gravity>1</gravity>
       </link>
     </model>
     <model name='kinect_pilar'>
@@ -675,11 +657,12 @@
         </visual>
         <self_collide>0</self_collide>
         <kinematic>0</kinematic>
+        <gravity>1</gravity>
       </link>
     </model>
     <model name='robot_pilar'>
       <static>1</static>
-      <pose frame=''>0.0 -1.0 0.5 0 -0 0</pose>
+      <pose frame=''>0 -1 0.5 0 -0 0</pose>
       <link name='link'>
         <inertial>
           <mass>1</mass>
@@ -730,10 +713,8 @@
         </visual>
         <self_collide>0</self_collide>
         <kinematic>0</kinematic>
+        <gravity>1</gravity>
       </link>
     </model>
-
-
   </world>
 </sdf>
-

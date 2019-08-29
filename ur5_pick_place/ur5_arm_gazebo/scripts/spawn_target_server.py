@@ -41,16 +41,12 @@ def handle_spawn_target(req):
         spawn_model = rospy.ServiceProxy("gazebo/spawn_urdf_model",SpawnModel)
         delete_model = rospy.ServiceProxy("gazebo/delete_model",DeleteModel)
 
-        target_locations={
-            1:[0,0,0],
-            2:[1,0,0],
-            3:[2,0,0],
-            4:[0,1,0],
-            5:[1,1,0],
-            6:[2,1,0],
-            7:[0,2,0],
-            8:[1,2,0],
-            9:[2,2,0]
+        xd = 0.25
+        yd = 0.25
+        target_locations = {
+            1:[-xd,yd,1],  2:[0,yd,1],  3:[xd,yd,1],
+            4:[-xd,0,1],   5:[0,0,1],   6:[xd,0,1],
+            7:[-xd,-yd,1], 8:[0,-yd,1], 9:[xd,-yd,1]
         }
 
         if req.position == 0:
