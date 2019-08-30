@@ -43,10 +43,12 @@ def handle_spawn_target(req):
 
         xd = 0.25
         yd = 0.25
+        table_heigth = 0.83
+
         target_locations = {
-            1:[-xd,yd,1],  2:[0,yd,1],  3:[xd,yd,1],
-            4:[-xd,0,1],   5:[0,0,1],   6:[xd,0,1],
-            7:[-xd,-yd,1], 8:[0,-yd,1], 9:[xd,-yd,1]
+            1:[-xd,yd,table_heigth],  2:[0,yd,table_heigth],  3:[xd,yd,table_heigth],
+            4:[-xd,0,table_heigth],   5:[0,0,table_heigth],   6:[xd,0,table_heigth],
+            7:[-xd,-yd,table_heigth], 8:[0,-yd,table_heigth], 9:[xd,-yd,table_heigth]
         }
 
         if req.position == 0:

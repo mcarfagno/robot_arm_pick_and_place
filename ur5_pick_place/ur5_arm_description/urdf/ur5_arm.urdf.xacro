@@ -5,11 +5,24 @@
     <xacro:arg name="prefix" default=""/>
     <xacro:arg name="joint_limited" default="false"/>
     <xacro:arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface"/>
+    <xacro:arg name="world_x" default="0.0"/>
+    <xacro:arg name="world_y" default="0.0"/>
+    <xacro:arg name="world_z" default="0.0"/>
 
     <!--XACRO INCLUDES-->
     <xacro:include filename="$(find gripper_description)/urdf/gripper.urdf.xacro" />
     <xacro:include filename="$(find ur_description)/urdf/ur5.urdf.xacro" />
     <xacro:include filename="$(find ur5_arm_description)/urdf/gazebo_plugins.urdf.xacro" />
+    
+    <!--XACRO MACRO DEFINITION -->
+    <xacro:macro name="world_link" params="x y z">
+        <link name="world" />
+        <joint name="world_joint" type="fixed">
+            <origin xyz="${x} ${y} ${z}" />
+            <parent link="world" />
+            <child link = "base_link" />
+        </joint>
+    </xacro:macro>
 
     <!--GRIPPER MACRO-->
     <xacro:gripper prefix="$(arg prefix)"/>
@@ -17,6 +30,9 @@
     <xacro:ur5_robot prefix="$(arg prefix)" joint_limited="$(arg joint_limited)"
     transmission_hw_interface="$(arg transmission_hw_interface)"
     />
+
+    <!--GAZEBO WORLD LINK-->
+    <xacro:world_link x="$(arg world_x)" y="$(arg world_y)" z="$(arg world_z)"/>
 
     <!--ROBOT LAST LINK TO GRIPPER BASE LINK-->
     <joint name="gripper_joint" type="fixed">
@@ -26,12 +42,7 @@
         <axis xyz="0 1 0" />
     </joint>
     
-    <!--GAZEBO FIX URDF TO WORLD-->
-    <link name="world" />
 
-    <joint name="world_joint" type="fixed">
-        <parent link="world" />
-        <child link = "base_link" />
-    </joint>
+
 
 </robot>
