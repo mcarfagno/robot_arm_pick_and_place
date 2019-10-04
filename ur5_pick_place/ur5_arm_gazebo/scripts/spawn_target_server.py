@@ -32,7 +32,16 @@ def handle_spawn_target(req):
     """
     Spawns the target in one of 9 prefined locations, picks one random if 0.
     """
-    if req.position not in range(0,10):
+
+    # retrieves locations as a array
+    target_locations = rospy.get_param("~locations")
+
+    if len(target_locations) == 0:
+        rospy.logerr("target locations list not found in param file!")
+        return rospy.ServiceException("target locations list not found in param file!")
+
+
+    if req.position not in range(0,len(target_locations)):
         rospy.logerr("target position not in valid range!")
         return rospy.ServiceException("target position not in valid range 0-9.")
     else:
@@ -41,18 +50,19 @@ def handle_spawn_target(req):
         spawn_model = rospy.ServiceProxy("gazebo/spawn_urdf_model",SpawnModel)
         delete_model = rospy.ServiceProxy("gazebo/delete_model",DeleteModel)
 
-        xd = 0.25
-        yd = 0.25
-        table_heigth = 0.83
+        # xd = 0.25
+        # yd = 0.25
+        # table_heigth = 0.83
 
-        target_locations = {
-            1:[-xd,yd,table_heigth],  2:[0,yd,table_heigth],  3:[xd,yd,table_heigth],
-            4:[-xd,0,table_heigth],   5:[0,0,table_heigth],   6:[xd,0,table_heigth],
-            7:[-xd,-yd,table_heigth], 8:[0,-yd,table_heigth], 9:[xd,-yd,table_heigth]
-        }
+        # target_locations = {
+        #     1:[-xd,yd,table_heigth],  2:[0,yd,table_heigth],  3:[xd,yd,table_heigth],
+        #     4:[-xd,0,table_heigth],   5:[0,0,table_heigth],   6:[xd,0,table_heigth],
+        #     7:[-xd,-yd,table_heigth], 8:[0,-yd,table_heigth], 9:[xd,-yd,table_heigth]
+        # }
+        
 
         if req.position == 0:
-            choosen_location = target_locations[randrange(1,10)]
+            choosen_location = target_locations[randrange(1,len(target_locations))]
         else:
             choosen_location = target_locations[req.position]
 

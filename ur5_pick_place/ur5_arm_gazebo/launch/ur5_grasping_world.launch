@@ -22,7 +22,13 @@
   <!-- kinect transform, using camera conrdinater for pointcloud  tf2 uses yaw pitch roll order-->
   <node pkg="tf2_ros" type="static_transform_publisher" name="kinect_broadcaster" args="1 0 1 1.57 0 -1.57 world camera_link" />
   
-  <!-- launch gazebo controllers -->
-  <include file="$(find ur5_arm_gazebo)/launch/controller_utils.launch"/>
+  <!-- launch gazebo controllers fou ur5 arm-->
+  <include file="$(find ur5_arm_gazebo)/launch/controller_utils.launch" />
+
+  <!-- Launch Target Spawner-->
+  <node name="target_spawn_server" pkg="ur5_arm_gazebo" type="spawn_target_server.py" output="screen">
+    <rosparam command="load" file="$(find ur5_arm_gazebo)/params/targets.yaml" />
+  </node>
+
 
 </launch>

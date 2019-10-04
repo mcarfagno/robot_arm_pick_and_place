@@ -1,0 +1,13 @@
+#Possible target locations in the world
+#They are arranged in a 3x3 grid on the table
+
+locations:
+  - [-0.25, 0.25,  0.83]
+  - [0,     0.25,  0.83]
+  - [0.25,  0.25,  0.83]
+  - [-0.25, 0,     0.83]
+  - [0,     0,     0.83]
+  - [0.25,  0,     0.83]
+  - [-0.25, -0.25, 0.83]
+  - [0,     -0.25, 0.83]
+  - [0.25, -0.25,  0.83]
