@@ -127,6 +127,8 @@ def handle_calculate_IK(req):
             joint_state_msg = rospy.wait_for_message(topic, topic_type, timeout=None)
             '''
             q = np.array([[0,0,0,0,0,0]]).T
+
+            # q[].item() is used otherwise a np array is returned
             x_ee=x(q[0].item(),q[1].item(),q[2].item(),q[3].item(),q[4].item(),q[5].item()).astype(np.float64)
             #x_ee=np.squeeze(x_ee, axis=2)
 
@@ -136,7 +138,7 @@ def handle_calculate_IK(req):
             delta_x[4]=( delta_x[4] + np.pi) % (2 * np.pi ) - np.pi
             delta_x[5]=( delta_x[5] + np.pi) % (2 * np.pi ) - np.pi
 
-            while(np.sum(np.abs(delta_x)) > 0.01):
+            while(np.sum(np.abs(delta_x)) > 0.1):
 
                 ja=j(q[0].item(),q[1].item(),q[2].item(),q[3].item(),q[4].item(),q[5].item()).astype(np.float64)
                 delta_q = 0.25*(ja.T).dot(delta_x)
@@ -151,12 +153,14 @@ def handle_calculate_IK(req):
                 delta_x[5]=( delta_x[5] + np.pi) % (2 * np.pi ) - np.pi
 
                 if (np.sum(np.abs(delta_x)) >= 10):
-                    break
+                    rospy.logerr("ik error is diverging!")
+                    return rospy.ServiceException("Unable to find IK solution.")
 
             #Populate response
             joint_trajectory_point.positions = [q[0],q[1],q[2],q[3],q[4],q[5]]
             joint_trajectory_list.append(joint_trajectory_point)
-
+        
+    rospy.loginfo("Success! Found {} IK Solutions!".format(len(joint_trajectory_list)))
     return CalculateIKResponse(joint_trajectory_list)
 
 def IK_server():

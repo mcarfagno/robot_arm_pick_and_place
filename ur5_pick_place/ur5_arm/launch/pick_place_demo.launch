@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+
+  <!-- Include IK Solver Server-->
+  <include file="$(find ur5_arm)/launch/ik_server.launch"/>
+
+  <!-- Include MOVEIT! -->
+  <!-- <include file="$(find ur5_arm_moveit_config)/launch/ur5_arm_planning_execution.launch "/> -->
+
+  <!-- main demo nodde -->
+  <node name="pick_place_commander" pkg="ur5_arm" type="pick_and_place_moveit.py" output="screen">
+    
+  </node>
+
+</launch>

@@ -12,6 +12,7 @@ from moveit_msgs.msg import (
 )
 
 from geometry_msgs.msg import (
+    Pose,
     PoseStamped,
     Quaternion
 )
@@ -99,11 +100,48 @@ class Commander(object):
 def main():
     print("Initializing node... ")
     rospy.init_node("moveit_commander_node")
-    print("Running. Ctrl-c to quit")
-
+    print("Running Pick and Place Demo. Ctrl-c to quit")
+    
+    try:
+        rospy.wait_for_service("/spawn_target",5)
+        rospy.wait_for_service("/calculate_ik",5)
+    except rospy.ROSException as e:
+        rospy.logerr("Services are unavaiable...")
+        sys.exit(str(e))
+    
+    # 0- START ARM COMMANDER
     move = Commander()
+
+    # 1- MOVE ROBOT TO PREDEFINED STARTING POSE
     move.arm_goto_named_target("start")
     move.gripper_goto_named_target("open")
+    raw_input("Robot moved to starting Position. Press Enter to continue...")
+
+    # 2- SPAWN TARGET AT RANDOM LOCATION
+    spawn_target = rospy.ServiceProxy("/spawn_target",SpawnTarget)
+    target_pose = spawn_target(SpawnTargetRequest(0)).pose
+    raw_input("Target Spawed in position [{},{},{}]. Press Enter to continue...".format(target_pose.position.x,
+                                                                                        target_pose.position.y,
+                                                                                        target_pose.position.z))
+
+    # 3- COMPUTE INVERSE KINEMATICS
+    calculate_ik = rospy.ServiceProxy("/calculate_ik",CalculateIK)
+    ik_poses = CalculateIKRequest()
+    
+    # approach
+    goal_pose=Pose()
+    goal_pose.position.x = target_pose.position.x
+    goal_pose.position.y = target_pose.position.y
+    goal_pose.position.z = target_pose.position.z + 0.17
+    
+    # approach angle
+    goal_pose.orientation=Quaternion(*quaternion_from_euler(0.0, 0.0,-1.57))
+
+    # send ik request
+    ik_poses.poses.append(goal_pose)
+    joint_angles = calculate_ik(ik_poses)
+    raw_input("Found IK Solution {}. Press Enter to continue...".format(joint_angles.points[0].positions))
+
     move.arm_goto_joint_target([0,
                                 -math.pi/4,
                                 0,
