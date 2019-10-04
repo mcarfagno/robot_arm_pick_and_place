@@ -17,7 +17,7 @@
   <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model robot" respawn="false" output="screen" />
 
   <!-- spawn kinect model in gazebo -->
-  <node name="spawn_gazebo_model_2" pkg="gazebo_ros" type="spawn_model" args="-sdf -file $(find ur5_arm_gazebo)/models/kinect_ros/model.sdf -model kinect_ros -x 1.0 -y 0.0 -z 1.01 -Y 3.1416" respawn="false" output="screen" />
+  <node name="spawn_gazebo_model_2" pkg="gazebo_ros" type="spawn_model" args="-sdf -file $(find ur5_arm_gazebo)/models/kinect_ros/model.sdf -model kinect_ros -x 1.0 -y 0.0 -z 1.01" respawn="false" output="screen" />
   
   <!-- kinect transform, using camera conrdinater for pointcloud  tf2 uses yaw pitch roll order-->
   <node pkg="tf2_ros" type="static_transform_publisher" name="kinect_broadcaster" args="1 0 1 1.57 0 -1.57 world camera_link" />

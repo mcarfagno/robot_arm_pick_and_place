@@ -16,6 +16,18 @@ from geometry_msgs.msg import (
     Quaternion
 )
 
+from ur5_arm.srv import(
+    CalculateIK,
+    CalculateIKRequest,
+    CalculateIKResponse
+)
+
+from ur5_arm_gazebo.srv import(
+    SpawnTarget,
+    SpawnTargetResponse,
+    SpawnTargetRequest
+)
+
 from tf.transformations import (
     quaternion_from_euler
 )
@@ -39,6 +51,7 @@ class Commander(object):
                                             PlanningScene,
                                             queue_size=1)
 
+        # Add the table to the scene
         self._add_table(0,0,0)
 
     def _add_table(self,x,y,z):

@@ -62,9 +62,13 @@ def handle_calculate_IK(req):
                       [ sin(angle),  cos(angle),  0],
                       [          0,           0,  1]])
 
-        #Gazebo to DH base link orientation offset
-        R_BASE = R_z.subs('angle',pi)
-        T_BASE = R_BASE.col_insert(3, Matrix([0, 0, 0]))
+        #Gazebo to DH base link transform
+        base_off = rospy.get_param("~base_position") # offset of the base relative to the world frame in gazebo
+        R_BASE = R_z.subs('angle',pi)                # yaw offset of urdf base_link frame vs DH frame
+        T_BASE = R_BASE.col_insert(3, Matrix([base_off[0],
+                                             base_off[1],
+                                             base_off[2]]))
+
         T_BASE = T_BASE.row_insert(3, Matrix([[0, 0, 0, 1]]))
 
         #DH to Gazebo EE orientation offset
@@ -84,12 +88,18 @@ def handle_calculate_IK(req):
 
         #Compute Analytical Jacobian
         J = zeros(6,6)
-        J[:,0] = diff(X,q1)
-        J[:,1] = diff(X,q2)
-        J[:,2] = diff(X,q3)
-        J[:,3] = diff(X,q4)
-        J[:,4] = diff(X,q5)
-        J[:,5] = diff(X,q6)
+        # J[:,0] = diff(X,q1)
+        # J[:,1] = diff(X,q2)
+        # J[:,2] = diff(X,q3)
+        # J[:,3] = diff(X,q4)
+        # J[:,4] = diff(X,q5)
+        # J[:,5] = diff(X,q6)
+        J[:,0] = X.diff(q1)
+        J[:,1] = X.diff(q2)
+        J[:,2] = X.diff(q3)
+        J[:,3] = X.diff(q4)
+        J[:,4] = X.diff(q5)
+        J[:,5] = X.diff(q6)
         j=lambdify([q1,q2,q3,q4,q5,q6],J,"numpy")
 
         #Initialize response
@@ -117,8 +127,8 @@ def handle_calculate_IK(req):
             joint_state_msg = rospy.wait_for_message(topic, topic_type, timeout=None)
             '''
             q = np.array([[0,0,0,0,0,0]]).T
-            x_ee=x(q[0],q[1],q[2],q[3],q[4],q[5]).astype(np.float64)
-            x_ee=np.squeeze(x_ee, axis=2)
+            x_ee=x(q[0].item(),q[1].item(),q[2].item(),q[3].item(),q[4].item(),q[5].item()).astype(np.float64)
+            #x_ee=np.squeeze(x_ee, axis=2)
 
             #Compute Error
             delta_x=x_goal-x_ee
@@ -128,12 +138,12 @@ def handle_calculate_IK(req):
 
             while(np.sum(np.abs(delta_x)) > 0.01):
 
-                ja=(j(q[0],q[1],q[2],q[3],q[4],q[5])).astype(np.float64)
+                ja=j(q[0].item(),q[1].item(),q[2].item(),q[3].item(),q[4].item(),q[5].item()).astype(np.float64)
                 delta_q = 0.25*(ja.T).dot(delta_x)
                 q=q+delta_q
 
-                x_ee=x(q[0],q[1],q[2],q[3],q[4],q[5]).astype(np.float64)
-                x_ee=np.squeeze(x_ee, axis=2)
+                x_ee=x(q[0].item(),q[1].item(),q[2].item(),q[3].item(),q[4].item(),q[5].item()).astype(np.float64)
+                #x_ee=np.squeeze(x_ee, axis=2)
 
                 delta_x=x_goal-x_ee
                 delta_x[3]=( delta_x[3] + np.pi) % (2 * np.pi ) - np.pi

@@ -2,8 +2,8 @@
 <launch>
 
   <!-- Launch UR5 Inverse Kinematic Solver -->
-  <node name="ik_server" pkg="ur5_arm" type="ik_server.py" >
-    <rosparam command="load" file="$(ur5_arm)/cfg/ur5_arm_ik.yaml" />
+  <node name="ik_server" pkg="ur5_arm" type="ik_server.py" output="screen">
+    <rosparam command="load" file="$(find ur5_arm)/params/ur5_arm_ik.yaml" />
   </node>
 
 </launch>
