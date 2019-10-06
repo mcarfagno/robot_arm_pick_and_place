@@ -135,10 +135,10 @@
       </spot>
     </light>
     <state world_name='default'>
-      <sim_time>465 696000000</sim_time>
-      <real_time>136 738724027</real_time>
-      <wall_time>1567082691 307050591</wall_time>
-      <iterations>135871</iterations>
+      <sim_time>582 267000000</sim_time>
+      <real_time>117 979400211</real_time>
+      <wall_time>1570361444 535140194</wall_time>
+      <iterations>116571</iterations>
       <model name='building'>
         <pose frame=''>-0.05 -0.05 0 0 -0 0</pose>
         <scale>1 1 1</scale>
@@ -186,10 +186,10 @@
         </link>
       </model>
       <model name='robot_pilar'>
-        <pose frame=''>0 -1 0.5 0 -0 0</pose>
+        <pose frame=''>0 -0.7 0.5 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>0 -1 0.5 0 -0 0</pose>
+          <pose frame=''>0 -0.7 0.5 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -204,7 +204,7 @@
     </state>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose frame=''>3.63735 -1.65591 3.35248 -0 0.599643 2.60417</pose>
+        <pose frame=''>3.63741 -1.65597 3.35235 -0 0.599643 2.60417</pose>
         <view_controller>ortho</view_controller>
         <projection_type>orthographic</projection_type>
       </camera>

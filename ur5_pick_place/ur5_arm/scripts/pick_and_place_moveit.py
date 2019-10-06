@@ -52,13 +52,13 @@ class Commander(object):
                                             PlanningScene,
                                             queue_size=1)
 
-        # Add the table to the scene
-        self._add_table(0,0,0)
+        # Add the table to the scene, position is relative to robot base
+        self._add_table(0,0.7,-1)
 
     def _add_table(self,x,y,z):
         '''
         Adds the cafe table to the scene as
-        collision object
+        collision object: this allows moveit to plan a collisio-free trajectory.
         '''
         p = PoseStamped()
         p.header.frame_id = self._robot.get_planning_frame()
@@ -132,22 +132,16 @@ def main():
     goal_pose=Pose()
     goal_pose.position.x = target_pose.position.x
     goal_pose.position.y = target_pose.position.y
-    goal_pose.position.z = target_pose.position.z + 0.17
-    
+    goal_pose.position.z = target_pose.position.z + 0.02
     # approach angle
-    goal_pose.orientation=Quaternion(*quaternion_from_euler(0.0, 0.0,-1.57))
+    goal_pose.orientation=Quaternion(*quaternion_from_euler(-3.1415, 0.0,1.57))
 
     # send ik request
     ik_poses.poses.append(goal_pose)
     joint_angles = calculate_ik(ik_poses)
     raw_input("Found IK Solution {}. Press Enter to continue...".format(joint_angles.points[0].positions))
 
-    move.arm_goto_joint_target([0,
-                                -math.pi/4,
-                                0,
-                                -math.pi/2,
-                                0,
-                                math.pi/3])
+    move.arm_goto_joint_target(joint_angles.points[0].positions)
 
     rospy.spin()
 

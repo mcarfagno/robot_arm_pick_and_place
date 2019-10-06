@@ -11,18 +11,21 @@
   </include>
 
   <!-- send robot urdf to param server -->
-  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find ur5_arm_description)/urdf/ur5_arm.urdf.xacro' world_y:=-1.0 world_z:=1.01" />
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find ur5_arm_description)/urdf/ur5_arm.urdf.xacro' world_y:=-0.7 world_z:=1.01" />
 
   <!-- spawn robot in gazebo -->
   <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model robot" respawn="false" output="screen" />
 
   <!-- spawn kinect model in gazebo -->
-  <node name="spawn_gazebo_model_2" pkg="gazebo_ros" type="spawn_model" args="-sdf -file $(find ur5_arm_gazebo)/models/kinect_ros/model.sdf -model kinect_ros -x 1.0 -y 0.0 -z 1.01" respawn="false" output="screen" />
+  <node name="spawn_gazebo_model_2" pkg="gazebo_ros" type="spawn_model" args="-sdf -file $(find ur5_arm_gazebo)/models/kinect_ros/model.sdf -model kinect_ros -x 1.0 -y 0.0 -z 1.01 -yaw 3.1415" respawn="false" output="screen" />
+
+  <!-- spawn bin in gazebo -->
+  <!-- <node name="spawn_gazebo_model_3" pkg="gazebo_ros" type="spawn_model" args="-sdf -file $(find ur5_arm_gazebo)/models/kinematics_bin/model.sdf -model kinematics_bin -x 1.0 -y 0.7 -z 1.0" respawn="false" output="screen" /> -->
   
   <!-- kinect transform, using camera conrdinater for pointcloud  tf2 uses yaw pitch roll order-->
   <node pkg="tf2_ros" type="static_transform_publisher" name="kinect_broadcaster" args="1 0 1 1.57 0 -1.57 world camera_link" />
   
-  <!-- launch gazebo controllers fou ur5 arm-->
+  <!-- launch gazebo controllers for ur5 arm-->
   <include file="$(find ur5_arm_gazebo)/launch/controller_utils.launch" />
 
   <!-- Launch Target Spawner-->

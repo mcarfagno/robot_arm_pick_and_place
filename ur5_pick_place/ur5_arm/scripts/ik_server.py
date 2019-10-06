@@ -137,11 +137,12 @@ def handle_calculate_IK(req):
             delta_x[3]=( delta_x[3] + np.pi) % (2 * np.pi ) - np.pi
             delta_x[4]=( delta_x[4] + np.pi) % (2 * np.pi ) - np.pi
             delta_x[5]=( delta_x[5] + np.pi) % (2 * np.pi ) - np.pi
-
+            
+            itr = 0
             while(np.sum(np.abs(delta_x)) > 0.1):
-
+                
                 ja=j(q[0].item(),q[1].item(),q[2].item(),q[3].item(),q[4].item(),q[5].item()).astype(np.float64)
-                delta_q = 0.25*(ja.T).dot(delta_x)
+                delta_q = 0.05*(ja.T).dot(delta_x)
                 q=q+delta_q
 
                 x_ee=x(q[0].item(),q[1].item(),q[2].item(),q[3].item(),q[4].item(),q[5].item()).astype(np.float64)
@@ -151,6 +152,11 @@ def handle_calculate_IK(req):
                 delta_x[3]=( delta_x[3] + np.pi) % (2 * np.pi ) - np.pi
                 delta_x[4]=( delta_x[4] + np.pi) % (2 * np.pi ) - np.pi
                 delta_x[5]=( delta_x[5] + np.pi) % (2 * np.pi ) - np.pi
+
+                if itr>5000:
+                    break
+                else:
+                    itr=itr+1
 
                 if (np.sum(np.abs(delta_x)) >= 10):
                     rospy.logerr("ik error is diverging!")

@@ -1,5 +1,11 @@
-# attached gripper lenght inc. fingers
+# Attached gripper lenght inc. fingers
 gripper_lenght: 0.035
 
 # Robot base_link position in the world frame
-base_position: [0.0, -1.0, 1.0]
+base_position: [0.0, -0.7, 1.0]
+
+# IK Solver settings
+ik_solver:
+  max_iter: 1000
+  step: 0.1
+  tolerance: 0.1
