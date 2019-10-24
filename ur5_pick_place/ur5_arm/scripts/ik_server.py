@@ -78,7 +78,7 @@ def handle_calculate_IK(req):
 
         T0_EE_GAZEBO = T_BASE*T0_EE*T_CORR
 
-        #Compute EE Pose Vector
+        # Compute EE Pose Vector -> RPY
         X = zeros(6,1)
         X[0:3,0] = T0_EE_GAZEBO[0:3,3]
         X[3,0] = atan2(T0_EE_GAZEBO[2,1],T0_EE_GAZEBO[2,2]) #Roll
@@ -102,6 +102,25 @@ def handle_calculate_IK(req):
         J[:,5] = X.diff(q6)
         j=lambdify([q1,q2,q3,q4,q5,q6],J,"numpy")
 
+        # # Compute EE Pose Vector -> QUATERNIONS
+        # X = zeros(7,1)
+        # X[0:3,0] = T0_EE_GAZEBO[0:3,3]
+        # X[3,0] = 0.5*sign(T0_EE_GAZEBO[2,1]-T0_EE_GAZEBO[1,2])*sqrt(T0_EE_GAZEBO[0,0]-T0_EE_GAZEBO[1,1]-T0_EE_GAZEBO[2,2]+1)  #qx
+        # X[4,0] = 0.5*sign(T0_EE_GAZEBO[0,2]-T0_EE_GAZEBO[2,0])*sqrt(-T0_EE_GAZEBO[0,0]+T0_EE_GAZEBO[1,1]-T0_EE_GAZEBO[2,2]+1) #qy
+        # X[5,0] = 0.5*sign(T0_EE_GAZEBO[1,0]-T0_EE_GAZEBO[0,1])*sqrt(-T0_EE_GAZEBO[0,0]-T0_EE_GAZEBO[1,1]+T0_EE_GAZEBO[2,2]+1) #qz
+        # X[6,0] = 0.5*sqrt(T0_EE_GAZEBO[0,0]+T0_EE_GAZEBO[1,1]+T0_EE_GAZEBO[2,2]+1)                                            #w
+        # x=lambdify([q1,q2,q3,q4,q5,q6],X,"numpy")
+
+        # #Compute Analytical Jacobian
+        # J = zeros(7,6)
+        # J[:,0] = X.diff(q1)
+        # J[:,1] = X.diff(q2)
+        # J[:,2] = X.diff(q3)
+        # J[:,3] = X.diff(q4)
+        # J[:,4] = X.diff(q5)
+        # J[:,5] = X.diff(q6)
+        # j=lambdify([q1,q2,q3,q4,q5,q6],J,"numpy")
+
         #Initialize response
         joint_trajectory_list =[]
 
@@ -109,7 +128,7 @@ def handle_calculate_IK(req):
 
             joint_trajectory_point = JointTrajectoryPoint()
 
-            #Extract EE goal pose from request
+            #Extract EE goal pose from request -> RPY
             px = req.poses[i].position.x
             py = req.poses[i].position.y
             pz = req.poses[i].position.z
@@ -120,6 +139,17 @@ def handle_calculate_IK(req):
                                                                           req.poses[i].orientation.w,])
 
             x_goal = np.array([[px,py,pz,roll,pitch,yaw]]).T
+
+            # #Extract EE goal pose from request -> QUATERNION
+            # px = req.poses[i].position.x
+            # py = req.poses[i].position.y
+            # pz = req.poses[i].position.z
+            # qx = req.poses[i].orientation.x
+            # qy = req.poses[i].orientation.y
+            # qz = req.poses[i].orientation.z
+            # w = req.poses[i].orientation.w
+
+            # x_goal = np.array([[px,py,pz,qx,qy,qz,w]]).T
 
             #Initialize
             '''
@@ -139,10 +169,14 @@ def handle_calculate_IK(req):
             delta_x[5]=( delta_x[5] + np.pi) % (2 * np.pi ) - np.pi
             
             itr = 0
-            while(np.sum(np.abs(delta_x)) > 0.1):
+            k = 0.5
+            min_k = 0.001
+            decay = 0.99
+
+            while(np.sum(np.abs(delta_x)) > 0.02):
                 
                 ja=j(q[0].item(),q[1].item(),q[2].item(),q[3].item(),q[4].item(),q[5].item()).astype(np.float64)
-                delta_q = 0.05*(ja.T).dot(delta_x)
+                delta_q = k*(ja.T).dot(delta_x)
                 q=q+delta_q
 
                 x_ee=x(q[0].item(),q[1].item(),q[2].item(),q[3].item(),q[4].item(),q[5].item()).astype(np.float64)
@@ -157,6 +191,10 @@ def handle_calculate_IK(req):
                     break
                 else:
                     itr=itr+1
+                    k = max(min_k,k*decay)
+                    if itr%100 == 0:
+                        print("ik_error at iter {}: {}".format(itr,np.sum(np.abs(delta_x))))
+                        print("ik gain {}".format(k))
 
                 if (np.sum(np.abs(delta_x)) >= 10):
                     rospy.logerr("ik error is diverging!")

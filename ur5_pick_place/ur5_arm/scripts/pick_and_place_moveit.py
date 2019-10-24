@@ -141,9 +141,16 @@ def main():
     joint_angles = calculate_ik(ik_poses)
     raw_input("Found IK Solution {}. Press Enter to continue...".format(joint_angles.points[0].positions))
 
+    # 4- ATTEMPT GRASP
     move.arm_goto_joint_target(joint_angles.points[0].positions)
+    move.gripper_goto_named_target("closed")
+    raw_input("Pick attempted. Press Enter to continue...")
 
-    rospy.spin()
+    # 6- RETURN TO PREDEFINED STARTING POSE
+    move.arm_goto_named_target("start")
+    raw_input("Demo Finished. Press Enter to continue...")
+
+    #rospy.spin()
 
 
 if __name__ == "__main__":
