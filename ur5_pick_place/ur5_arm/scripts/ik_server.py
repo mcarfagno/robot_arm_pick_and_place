@@ -4,6 +4,7 @@ import rospy
 import tf
 from ur5_arm.srv import *
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
+from sensor_msgs.msg import JointState
 from geometry_msgs.msg import Pose
 from sympy import *
 import numpy as np
@@ -151,12 +152,20 @@ def handle_calculate_IK(req):
 
             # x_goal = np.array([[px,py,pz,qx,qy,qz,w]]).T
 
-            #Initialize
-            '''
-            TODO: get theta values from Gazebo instead
-            joint_state_msg = rospy.wait_for_message(topic, topic_type, timeout=None)
-            '''
-            q = np.array([[0,0,0,0,0,0]]).T
+            #IK Algorithm Params
+            itr = 0
+            k = rospy.get_param("~ik_solver/step",0.25)
+            min_k = k*0.01
+            tolerance = rospy.get_param("~ik_solver/tolerance",0.01)
+            max_iter = rospy.get_param("~ik_solver/max_iter",0.01)
+            decay = 0.95
+
+            #Initialize: get real joint states from topic else zeros
+            try:
+                joint_state_msg = rospy.wait_for_message(rospy.get_param("~js_topic","joint_states"), JointState, timeout=2)
+                q = np.array([joint_state_msg.position[0:6]]).T
+            except rospy.exceptions.ROSException as e:
+                q = np.array([[0,0,0,0,0,0]]).T
 
             # q[].item() is used otherwise a np array is returned
             x_ee=x(q[0].item(),q[1].item(),q[2].item(),q[3].item(),q[4].item(),q[5].item()).astype(np.float64)
@@ -168,12 +177,7 @@ def handle_calculate_IK(req):
             delta_x[4]=( delta_x[4] + np.pi) % (2 * np.pi ) - np.pi
             delta_x[5]=( delta_x[5] + np.pi) % (2 * np.pi ) - np.pi
             
-            itr = 0
-            k = 0.5
-            min_k = 0.001
-            decay = 0.99
-
-            while(np.sum(np.abs(delta_x)) > 0.02):
+            while(np.sum(np.abs(delta_x)) > tolerance):
                 
                 ja=j(q[0].item(),q[1].item(),q[2].item(),q[3].item(),q[4].item(),q[5].item()).astype(np.float64)
                 delta_q = k*(ja.T).dot(delta_x)
@@ -187,14 +191,14 @@ def handle_calculate_IK(req):
                 delta_x[4]=( delta_x[4] + np.pi) % (2 * np.pi ) - np.pi
                 delta_x[5]=( delta_x[5] + np.pi) % (2 * np.pi ) - np.pi
 
-                if itr>5000:
+                if itr>max_iter:
                     break
-                else:
-                    itr=itr+1
+                
+                itr=itr+1
+                if itr%100 == 0:
+                    print("ik_error at iter {}: {}".format(itr,np.sum(np.abs(delta_x))))
+                    print("ik gain {}".format(k))
                     k = max(min_k,k*decay)
-                    if itr%100 == 0:
-                        print("ik_error at iter {}: {}".format(itr,np.sum(np.abs(delta_x))))
-                        print("ik gain {}".format(k))
 
                 if (np.sum(np.abs(delta_x)) >= 10):
                     rospy.logerr("ik error is diverging!")
