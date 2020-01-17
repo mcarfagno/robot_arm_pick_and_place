@@ -9,6 +9,6 @@ js_topic: "/joint_states"
 
 # IK Solver settings
 ik_solver:
-  max_iter: 3000
-  step: 0.75      
+  max_iter: 500
+  lambda: 1      
   tolerance: 0.01

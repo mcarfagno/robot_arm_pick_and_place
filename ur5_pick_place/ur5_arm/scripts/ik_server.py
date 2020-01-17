@@ -154,11 +154,9 @@ def handle_calculate_IK(req):
 
             #IK Algorithm Params
             itr = 0
-            k = rospy.get_param("~ik_solver/step",0.25)
-            min_k = k*0.01
+            l=rospy.get_param("~ik_solver/lambda",1.0)
             tolerance = rospy.get_param("~ik_solver/tolerance",0.01)
-            max_iter = rospy.get_param("~ik_solver/max_iter",0.01)
-            decay = 0.95
+            max_iter = rospy.get_param("~ik_solver/max_iter",1000)
 
             #Initialize: get real joint states from topic else zeros
             try:
@@ -180,7 +178,8 @@ def handle_calculate_IK(req):
             while(np.sum(np.abs(delta_x)) > tolerance):
                 
                 ja=j(q[0].item(),q[1].item(),q[2].item(),q[3].item(),q[4].item(),q[5].item()).astype(np.float64)
-                delta_q = k*(ja.T).dot(delta_x)
+                delta_q = (ja.T).dot( np.linalg.inv(ja.dot(ja.T) + l**2*np.eye(6)) ).dot(delta_x)
+                
                 q=q+delta_q
 
                 x_ee=x(q[0].item(),q[1].item(),q[2].item(),q[3].item(),q[4].item(),q[5].item()).astype(np.float64)
@@ -197,8 +196,8 @@ def handle_calculate_IK(req):
                 itr=itr+1
                 if itr%100 == 0:
                     print("ik_error at iter {}: {}".format(itr,np.sum(np.abs(delta_x))))
-                    print("ik gain {}".format(k))
-                    k = max(min_k,k*decay)
+                    #print("ik gain {}".format(k))
+                    #k = max(min_k,k*decay)
 
                 if (np.sum(np.abs(delta_x)) >= 10):
                     rospy.logerr("ik error is diverging!")
