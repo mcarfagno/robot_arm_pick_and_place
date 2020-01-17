@@ -84,7 +84,7 @@ def handle_calculate_IK(req):
         X[0:3,0] = T0_EE_GAZEBO[0:3,3]
         X[3,0] = atan2(T0_EE_GAZEBO[2,1],T0_EE_GAZEBO[2,2]) #Roll
         X[4,0] = atan2(-T0_EE_GAZEBO[2,0], sqrt(T0_EE_GAZEBO[0,0]*T0_EE_GAZEBO[0,0] + T0_EE_GAZEBO[1,0]*T0_EE_GAZEBO[1,0])) #Pitch
-        X[5,0] = atan2(T0_EE_GAZEBO[1,0],T0_EE_GAZEBO[0,0]) #YAW
+        X[5,0] = atan2(T0_EE_GAZEBO[1,0],T0_EE_GAZEBO[0,0]) #Yaw
         x=lambdify([q1,q2,q3,q4,q5,q6],X,"numpy")
 
         #Compute Analytical Jacobian
@@ -158,53 +158,84 @@ def handle_calculate_IK(req):
             tolerance = rospy.get_param("~ik_solver/tolerance",0.01)
             max_iter = rospy.get_param("~ik_solver/max_iter",1000)
 
+            # Allocate NP Arrays
+            N=6 #number of joints
+            M=6 #space variables
+            q = np.empty(N).reshape(6,1) #Joints angles
+            x_ee = np.empty(M).reshape(6,1) #EE Position 
+            delta_x = np.empty(M).reshape(6,1) #EE Error
+            ja=np.empty((M,N)) #Analitycal Jacobean
+
             #Initialize: get real joint states from topic else zeros
             try:
                 joint_state_msg = rospy.wait_for_message(rospy.get_param("~js_topic","joint_states"), JointState, timeout=2)
-                q = np.array([joint_state_msg.position[0:6]]).T
+                q[:,0] = joint_state_msg.position[0:6]
             except rospy.exceptions.ROSException as e:
-                q = np.array([[0,0,0,0,0,0]]).T
+                q[:,0] = [0,0,0,0,0,0]
 
             # q[].item() is used otherwise a np array is returned
-            x_ee=x(q[0].item(),q[1].item(),q[2].item(),q[3].item(),q[4].item(),q[5].item()).astype(np.float64)
-            #x_ee=np.squeeze(x_ee, axis=2)
+            x_ee[:]=x(q[0].item(),
+                    q[1].item(),
+                    q[2].item(),
+                    q[3].item(),
+                    q[4].item(),
+                    q[5].item()).astype(np.float64)
 
-            #Compute Error
-            delta_x=x_goal-x_ee
-            delta_x[3]=( delta_x[3] + np.pi) % (2 * np.pi ) - np.pi
-            delta_x[4]=( delta_x[4] + np.pi) % (2 * np.pi ) - np.pi
-            delta_x[5]=( delta_x[5] + np.pi) % (2 * np.pi ) - np.pi
+            #Compute EE Error
+            for idx in range(M):
+                delta_x[idx] = x_goal[idx] - x_ee[idx]
+                
+            delta_x[3] = ( delta_x[3] + np.pi) % (2 * np.pi ) - np.pi
+            delta_x[4] = ( delta_x[4] + np.pi) % (2 * np.pi ) - np.pi
+            delta_x[5] = ( delta_x[5] + np.pi) % (2 * np.pi ) - np.pi
             
             while(np.sum(np.abs(delta_x)) > tolerance):
                 
-                ja=j(q[0].item(),q[1].item(),q[2].item(),q[3].item(),q[4].item(),q[5].item()).astype(np.float64)
-                delta_q = (ja.T).dot( np.linalg.inv(ja.dot(ja.T) + l**2*np.eye(6)) ).dot(delta_x)
+                ja[:]=j(q[0].item(),
+                        q[1].item(),
+                        q[2].item(),
+                        q[3].item(),
+                        q[4].item(),
+                        q[5].item()).astype(np.float64)
+
+            
+                q[:]=q+(ja.T).dot( np.linalg.inv(ja.dot(ja.T) + l**2*np.eye(6)) ).dot(delta_x)
+
+                x_ee[:]=x(q[0].item(),
+                        q[1].item(),
+                        q[2].item(),
+                        q[3].item(),
+                        q[4].item(),
+                        q[5].item()).astype(np.float64)
                 
-                q=q+delta_q
+                for idx in range(M):
+                    delta_x[idx] = x_goal[idx] - x_ee[idx]
 
-                x_ee=x(q[0].item(),q[1].item(),q[2].item(),q[3].item(),q[4].item(),q[5].item()).astype(np.float64)
-                #x_ee=np.squeeze(x_ee, axis=2)
-
-                delta_x=x_goal-x_ee
-                delta_x[3]=( delta_x[3] + np.pi) % (2 * np.pi ) - np.pi
-                delta_x[4]=( delta_x[4] + np.pi) % (2 * np.pi ) - np.pi
-                delta_x[5]=( delta_x[5] + np.pi) % (2 * np.pi ) - np.pi
-
+                delta_x[3] = ( delta_x[3] + np.pi) % (2 * np.pi ) - np.pi
+                delta_x[4] = ( delta_x[4] + np.pi) % (2 * np.pi ) - np.pi
+                delta_x[5] = ( delta_x[5] + np.pi) % (2 * np.pi ) - np.pi
+                
+                itr+=1
+                
                 if itr>max_iter:
+                    rospy.logwarn("IK Algorithm exceded number of allowed iterations")
                     break
                 
-                itr=itr+1
                 if itr%100 == 0:
-                    print("ik_error at iter {}: {}".format(itr,np.sum(np.abs(delta_x))))
-                    #print("ik gain {}".format(k))
-                    #k = max(min_k,k*decay)
+                    rospy.loginfo("ik_error at iter {}: {}".format(itr,np.sum(np.abs(delta_x))))
 
                 if (np.sum(np.abs(delta_x)) >= 10):
                     rospy.logerr("ik error is diverging!")
                     return rospy.ServiceException("Unable to find IK solution.")
 
-            #Populate response
-            joint_trajectory_point.positions = [q[0],q[1],q[2],q[3],q[4],q[5]]
+            # Fill response msg
+            joint_trajectory_point.positions = [q[0].item(),
+                                                q[1].item(),
+                                                q[2].item(),
+                                                q[3].item(),
+                                                q[4].item(),
+                                                q[5].item()]
+
             joint_trajectory_list.append(joint_trajectory_point)
         
     rospy.loginfo("Success! Found {} IK Solutions!".format(len(joint_trajectory_list)))
