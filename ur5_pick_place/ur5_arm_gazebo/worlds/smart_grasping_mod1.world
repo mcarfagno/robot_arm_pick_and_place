@@ -135,35 +135,35 @@
       </spot>
     </light>
     <state world_name='default'>
-      <sim_time>704 688000000</sim_time>
-      <real_time>126 40782630</real_time>
-      <wall_time>1580466794 587381200</wall_time>
-      <iterations>122421</iterations>
+      <sim_time>874 18000000</sim_time>
+      <real_time>173 144129408</real_time>
+      <wall_time>1580467915 670728099</wall_time>
+      <iterations>169330</iterations>
       <model name='bin'>
         <pose frame=''>0 0 0 0 -0 0</pose>
         <scale>1 1 1</scale>
       </model>
       <model name='bookshelf'>
-        <pose frame=''>-1.38217 -1.21412 0 0 -0 1.57281</pose>
+        <pose frame=''>-1.09004 -0.93556 0 0 -0 1.57281</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>-1.38217 -1.21412 0 0 -0 1.57281</pose>
+          <pose frame=''>-1.09004 -0.93556 0 0 -0 1.57281</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='building'>
-        <pose frame=''>-0.05 -0.05 0 0 -0 0</pose>
+        <pose frame=''>0.230982 0.234526 0 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='Wall_1'>
-          <pose frame=''>-1.47 -0.05 0 0 -0 1.5708</pose>
+          <pose frame=''>-1.18902 0.234526 0 0 -0 1.5708</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
         <link name='Wall_3'>
-          <pose frame=''>-0.045 1.5 0 0 -0 0</pose>
+          <pose frame=''>0.235982 1.78453 0 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -218,7 +218,7 @@
     </state>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose frame=''>3.64384 -1.69037 3.34162 -1.7e-05 0.599031 2.60372</pose>
+        <pose frame=''>3.64285 -1.71274 3.33967 1.1e-05 0.599415 2.6029</pose>
         <view_controller>ortho</view_controller>
         <projection_type>orthographic</projection_type>
       </camera>

@@ -128,25 +128,30 @@ def main():
     calculate_ik = rospy.ServiceProxy("/calculate_ik",CalculateIK)
     ik_poses = CalculateIKRequest()
     
-    # approach from above
+    # 3.1- approach goal from above
     goal_pose=Pose()
     goal_pose.position.x = target_pose.position.x
     goal_pose.position.y = target_pose.position.y -0.03
     goal_pose.position.z = target_pose.position.z + 0.2
-    
-    # approach angle
     goal_pose.orientation=Quaternion(*quaternion_from_euler(-3.1415, 0.0,1.57))
 
     ik_poses.poses.append(goal_pose)
 
-    # attempt grasp
+    # 3.2- attempt grasp
     goal_pose=Pose()
     goal_pose.position.x = target_pose.position.x
     goal_pose.position.y = target_pose.position.y - 0.03
     goal_pose.position.z = target_pose.position.z + 0.01
-    
-    # approach angle
     goal_pose.orientation=Quaternion(*quaternion_from_euler(-3.1415, 0.0,1.57))
+
+    ik_poses.poses.append(goal_pose)
+
+    # 3.3- place position
+    goal_pose=Pose()
+    goal_pose.position.x = -0.7
+    goal_pose.position.y = -0.7
+    goal_pose.position.z = 1.35
+    goal_pose.orientation=Quaternion(*quaternion_from_euler(-3.1415, 0.0,3.1))
 
     ik_poses.poses.append(goal_pose)
 
@@ -157,12 +162,15 @@ def main():
 
     # 4- ATTEMPT GRASP
     move.arm_goto_joint_target(joint_angles.points[0].positions)
+
     move.arm_goto_joint_target(joint_angles.points[1].positions)
 
     move.gripper_goto_named_target("closed")
     raw_input("Pick attempted. Press Enter to continue...")
 
-    # 6- RETURN TO PREDEFINED STARTING POSE
+    # 7- PLACE
+    move.arm_goto_joint_target(joint_angles.points[2].positions)
+    move.gripper_goto_named_target("open")
     move.arm_goto_named_target("start")
     raw_input("Demo Finished. Press Enter to continue...")
 
