@@ -128,21 +128,37 @@ def main():
     calculate_ik = rospy.ServiceProxy("/calculate_ik",CalculateIK)
     ik_poses = CalculateIKRequest()
     
-    # approach
+    # approach from above
     goal_pose=Pose()
     goal_pose.position.x = target_pose.position.x
-    goal_pose.position.y = target_pose.position.y
-    goal_pose.position.z = target_pose.position.z + 0.02
+    goal_pose.position.y = target_pose.position.y -0.03
+    goal_pose.position.z = target_pose.position.z + 0.2
+    
     # approach angle
     goal_pose.orientation=Quaternion(*quaternion_from_euler(-3.1415, 0.0,1.57))
 
-    # send ik request
     ik_poses.poses.append(goal_pose)
+
+    # attempt grasp
+    goal_pose=Pose()
+    goal_pose.position.x = target_pose.position.x
+    goal_pose.position.y = target_pose.position.y - 0.03
+    goal_pose.position.z = target_pose.position.z + 0.01
+    
+    # approach angle
+    goal_pose.orientation=Quaternion(*quaternion_from_euler(-3.1415, 0.0,1.57))
+
+    ik_poses.poses.append(goal_pose)
+
+    
+    # send ik request
     joint_angles = calculate_ik(ik_poses)
-    raw_input("Found IK Solution {}. Press Enter to continue...".format(joint_angles.points[0].positions))
+    raw_input("Found IK Solution. Press Enter to continue...")
 
     # 4- ATTEMPT GRASP
     move.arm_goto_joint_target(joint_angles.points[0].positions)
+    move.arm_goto_joint_target(joint_angles.points[1].positions)
+
     move.gripper_goto_named_target("closed")
     raw_input("Pick attempted. Press Enter to continue...")
 
