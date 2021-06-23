@@ -1,7 +1,7 @@
 # Pick and Place
 
 My take on simulating a pick and place task.
-Inspired by Udacity's [Robotic arm - Pick & Place project](https://github.com/udacity/RoboND-Kinematics-Project), but with my own solution. I tried to make this a bit more more unique by using a different robot and using a custom IK solver based on [Dampened Least Sqares](https://www.math.ucsd.edu/~sbuss/ResearchWeb/ikmethods/iksurvey.pdf) instead of a purely geomerichal one.
+Inspired by Udacity's [Robotic arm - Pick & Place project](https://github.com/udacity/RoboND-Kinematics-Project), but with my own solution. I tried to make this a bit more more unique by using a different robot and using an IK solver based on [Dampened Least Sqares](https://www.math.ucsd.edu/~sbuss/ResearchWeb/ikmethods/iksurvey.pdf) instead of a purely geometrical one.
 
 ## Contens
 
