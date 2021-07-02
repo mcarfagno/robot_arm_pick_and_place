@@ -15,15 +15,15 @@ Refer to these for theory bits!
 
 #### ROS Packages
 
-* **ur5_arm**: ROS nodes used to perform control the simulated ur5 robot.
+* **ur5_arm**: ROS nodes used to control the simulated ur5 robot. Kinematics-related software is here.
 
-* **ur5_arm_gazebo**: Robot arm simulation world.
+* **ur5_arm_gazebo**: Gazebo simulation world.
 
 * **ur5_arm_description**: Custom UR5 robot URDF with gripper for the simulation environment.
 
-* **gripper_description**: Custom gripper.
+* **gripper_description**: Gripper standalone URDF.
 
-* **ur5_arm_moveit_config**: Package to control the UR5 robot using ROS MOVEIT!.
+* **ur5_arm_moveit_config**: Package to control the UR5 robot joints using ROS MOVEIT!.
 
 ## Overview
 
@@ -43,13 +43,15 @@ Here is a general overview on how the simulation framework works:
      <img src="img/ur5_gazebo.png" width="640">
 </p>
 
+Use the provided ros launch files in this order.
+
 **1- Start the simulation**: set ups the scene in gazebo and brings-up the robot arm.
 
 ```bash
 roslaunch ur5_arm_gazebo ur5_grasping_world.launch 
 ```
 
-**2- Start MOVEIT Planner**: starts the trajectory planner
+**2- Start MOVEIT Planner**: starts the trajectory planner.
 
 ```bash
 roslaunch ur5_arm_moveit_config ur5_arm_planning_execution.launch 
@@ -63,12 +65,13 @@ roslaunch ur5_arm_moveit_config ur5_arm_planning_execution.launch
 
 ## Dependencies
 
-* [ROS Robot Operating System](https://http://wiki.ros.org/kinetic)
-* [Universal Robot ROS-INDUSTRIAL Package](https://github.com/ros-industrial/universal_robot)
+* [ROS Kinetic](https://http://wiki.ros.org/kinetic) -> currently tested on ros kinetic on ubuntu 16.04
+* [Universal Robot ROS-INDUSTRIAL Package](https://github.com/ros-industrial/universal_robot) -> clone this in the same ros workspace
 
 ## References and Special Thanks
 
 Not in any particular order:
+* [Jennifer Buehler](https://github.com/jenniferBuehler/gazebo-pkgs/wiki/The-Gazebo-grasp-fix-plugin) -> grasping plugin used in this project
 * [Robot Ignite Accademy](https://www.theconstructsim.com/robotigniteacademy_learnros/ros-courses-library/) -> original gazebo scene and Moveit! tutorials used to set up the arm joint controllers.
 * [Robotics Systems Lab](https://ethz.ch/content/dam/ethz/special-interest/mavt/robotics-n-intelligent-systems/rsl-dam/documents/RobotDynamics2018/RD_HS2018script.pdf) -> robotics kinematics and dynamics lecture notes.
 * [Udacity](https://www.youtube.com/user/Udacity) -> original project idea & Simpy usage. URDF gripper files are also from here.
